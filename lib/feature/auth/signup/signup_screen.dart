@@ -2,7 +2,7 @@ import 'package:fankosh/core/widgets/app_primary_button.dart';
 import 'package:fankosh/feature/auth/login/login_screen.dart';
 import 'package:fankosh/feature/auth/widgets/auth_header.dart';
 import 'package:fankosh/feature/auth/widgets/auth_text_field.dart';
-import 'package:fankosh/feature/home/home_screen.dart';
+import 'package:fankosh/feature/plans/plans_screen.dart';
 import 'package:flutter/material.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -145,7 +145,7 @@ class _SignupScreenState extends State<SignupScreen> {
       });
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) => const PlansScreen()),
       );
     });
   }

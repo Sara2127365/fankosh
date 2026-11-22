@@ -3,7 +3,7 @@ import 'package:fankosh/feature/auth/forgetpassword/forget_password_screen.dart'
 import 'package:fankosh/feature/auth/signup/signup_screen.dart';
 import 'package:fankosh/feature/auth/widgets/auth_header.dart';
 import 'package:fankosh/feature/auth/widgets/auth_text_field.dart';
-import 'package:fankosh/feature/home/home_screen.dart';
+import 'package:fankosh/feature/plans/plans_screen.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -51,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) => const PlansScreen()),
       );
     });
   }
