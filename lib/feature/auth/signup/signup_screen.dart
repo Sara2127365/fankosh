@@ -1,3 +1,4 @@
+import 'package:fankosh/core/style/color_manager.dart';
 import 'package:fankosh/core/widgets/app_primary_button.dart';
 import 'package:fankosh/feature/auth/login/login_screen.dart';
 import 'package:fankosh/feature/auth/widgets/auth_header.dart';
@@ -83,7 +84,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                         ),
                         trailing: isSelected
-                            ? const Icon(Icons.check, color: Color(0xFFFFBE26))
+                            ? const Icon(Icons.check, color: ColorManager.primaryColor)
                             : null,
                         onTap: () {
                           setState(() {
@@ -155,7 +156,7 @@ class _SignupScreenState extends State<SignupScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(0xFFFCFAF5),
+        backgroundColor: ColorManager.backgroundColor,
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -213,7 +214,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF1E2833),
+                          color: ColorManager.textDark,
                         ),
                       ),
                       const SizedBox(height: 6),
@@ -228,13 +229,13 @@ class _SignupScreenState extends State<SignupScreen> {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: const Color(0xFFE2E6EE)),
+                            border: Border.all(color: ColorManager.borderAlt),
                           ),
                           child: Row(
                             children: [
                               const Icon(
                                 Icons.keyboard_arrow_down_rounded,
-                                color: Color(0xFF7E8A9A),
+                                color: ColorManager.textMuted,
                               ),
                               const Spacer(),
                               Text(
@@ -242,13 +243,13 @@ class _SignupScreenState extends State<SignupScreen> {
                                 style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: Color(0xFF1E2833),
+                                  color: ColorManager.textDark,
                                 ),
                               ),
                               const SizedBox(width: 8),
                               const Icon(
                                 Icons.public,
-                                color: Color(0xFF7E8A9A),
+                                color: ColorManager.textMuted,
                                 size: 20,
                               ),
                             ],
@@ -272,7 +273,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         _isPasswordObscured
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
-                        color: const Color(0xFF7E8A9A),
+                        color: ColorManager.textMuted,
                         size: 20,
                       ),
                       onPressed: () {
@@ -283,7 +284,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     suffixIcon: const Icon(
                       Icons.lock_outline,
-                      color: Color(0xFF7E8A9A),
+                      color: ColorManager.textMuted,
                       size: 20,
                     ),
                   ),
@@ -301,7 +302,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         _isConfirmPasswordObscured
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
-                        color: const Color(0xFF7E8A9A),
+                        color: ColorManager.textMuted,
                         size: 20,
                       ),
                       onPressed: () {
@@ -313,7 +314,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     suffixIcon: const Icon(
                       Icons.lock_outline,
-                      color: Color(0xFF7E8A9A),
+                      color: ColorManager.textMuted,
                       size: 20,
                     ),
                   ),
@@ -337,7 +338,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       const Text(
                         'عندك حساب بالفعل؟ ',
                         style: TextStyle(
-                          color: Color(0xFF7E8A9A),
+                          color: ColorManager.textAfterButton,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),

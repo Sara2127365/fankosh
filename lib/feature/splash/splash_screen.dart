@@ -1,4 +1,6 @@
 import 'dart:async';
+
+import 'package:fankosh/core/assets/app_assets.dart';
 import 'package:fankosh/feature/onboarding/onboarding_first_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -25,12 +27,10 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(milliseconds: 1400),
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.7, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.elasticOut,
-      ),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.7,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
@@ -39,15 +39,13 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
-    _bottomSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.2, 1.0, curve: Curves.easeOutCubic),
-      ),
-    );
+    _bottomSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.2, 1.0, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _controller.forward();
 
@@ -84,7 +82,7 @@ class _SplashScreenState extends State<SplashScreen>
         children: [
           // Background Image
           Image.asset(
-            'assets/images/splash_bg.jpg',
+            AppAssets.splashBg,
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
               return Container(
@@ -115,7 +113,7 @@ class _SplashScreenState extends State<SplashScreen>
                 scale: _scaleAnimation,
                 child: Center(
                   child: Image.asset(
-                    'assets/images/fankosh_logo.png',
+                    AppAssets.fankoshLogo,
                     width: size.width * 0.72,
                     fit: BoxFit.contain,
                   ),
@@ -143,7 +141,7 @@ class _SplashScreenState extends State<SplashScreen>
                         bottom: 0,
                         left: -size.width * 0.05,
                         child: Image.asset(
-                          'assets/images/clapperboard.png',
+                          AppAssets.clapperboard,
                           width: size.width * 0.62,
                           fit: BoxFit.contain,
                         ),
@@ -154,7 +152,7 @@ class _SplashScreenState extends State<SplashScreen>
                         bottom: size.height * 0.02,
                         right: 0,
                         child: Image.asset(
-                          'assets/images/popcorn_bucket.png',
+                          AppAssets.popcornBucket,
                           width: size.width * 0.52,
                           fit: BoxFit.contain,
                         ),
@@ -165,7 +163,7 @@ class _SplashScreenState extends State<SplashScreen>
                         bottom: size.height * 0.03,
                         left: size.width * 0.46,
                         child: Image.asset(
-                          'assets/images/popcorn_kernel.png',
+                          AppAssets.popcornKernel,
                           width: 48,
                           fit: BoxFit.contain,
                         ),

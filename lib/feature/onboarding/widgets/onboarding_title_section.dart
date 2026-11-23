@@ -1,3 +1,4 @@
+import 'package:fankosh/core/style/color_manager.dart';
 import 'package:flutter/material.dart';
 
 class OnboardingTitleSection extends StatelessWidget {
@@ -25,7 +26,7 @@ class OnboardingTitleSection extends StatelessWidget {
                 height: 10,
                 width: highlightWidth,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFD54F).withOpacity(0.7),
+                  color: ColorManager.primaryColor.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
@@ -35,7 +36,7 @@ class OnboardingTitleSection extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF1E2833),
+                color: ColorManager.textDark,
               ),
               textAlign: TextAlign.center,
             ),
@@ -49,7 +50,7 @@ class OnboardingTitleSection extends StatelessWidget {
             style: const TextStyle(
               fontSize: 15,
               height: 1.5,
-              color: Color(0xFF7E8A9A),
+              color: ColorManager.textMuted,
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,

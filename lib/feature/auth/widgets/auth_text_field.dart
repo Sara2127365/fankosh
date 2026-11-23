@@ -1,3 +1,4 @@
+import 'package:fankosh/core/style/color_manager.dart';
 import 'package:flutter/material.dart';
 
 class AuthTextField extends StatelessWidget {
@@ -34,25 +35,30 @@ class AuthTextField extends StatelessWidget {
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF1E2833),
+            color: ColorManager.textDark,
           ),
         ),
         const SizedBox(height: 6),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: ColorManager.cardBackground,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFFE2E6EE)),
+            border: Border.all(color: ColorManager.borderAlt),
           ),
           child: TextField(
             controller: controller,
             obscureText: obscureText,
             keyboardType: keyboardType,
             textDirection: textDirection,
+            style: const TextStyle(
+              fontSize: 14.5,
+              color: ColorManager.textDark,
+              fontWeight: FontWeight.w500,
+            ),
             decoration: InputDecoration(
               hintText: hintText,
               hintStyle: const TextStyle(
-                color: Color(0xFFA0AAB8),
+                color: ColorManager.textHint,
                 fontSize: 14,
               ),
               prefixIcon: prefixIcon,
@@ -73,7 +79,7 @@ class AuthTextField extends StatelessWidget {
               helperText!,
               style: const TextStyle(
                 fontSize: 12,
-                color: Color(0xFF7E8A9A),
+                color: ColorManager.textMuted,
               ),
             ),
           ),

@@ -1,3 +1,4 @@
+import 'package:fankosh/core/style/color_manager.dart';
 import 'package:flutter/material.dart';
 
 class ForgetPassword extends StatefulWidget {
@@ -55,7 +56,9 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorManager.backgroundColor,
       appBar: AppBar(
+        backgroundColor: ColorManager.backgroundColor,
         title: const Text('نسيت كلمة المرور'),
         centerTitle: true,
       ),

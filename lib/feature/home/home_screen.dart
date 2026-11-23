@@ -1,5 +1,17 @@
+import 'package:fankosh/core/assets/app_assets.dart';
+import 'package:fankosh/core/localization/app_localization.dart';
+import 'package:fankosh/core/services/attempts_manager.dart';
+import 'package:fankosh/core/services/audio_picker_service.dart';
+import 'package:fankosh/core/services/voice_permission_service.dart';
+import 'package:fankosh/core/style/color_manager.dart';
+import 'package:fankosh/core/widgets/fankosh_bottom_nav_bar.dart';
+import 'package:fankosh/feature/home/audio_review_screen.dart';
+import 'package:fankosh/feature/home/out_of_attempts_screen.dart';
+import 'package:fankosh/feature/home/recording_screen.dart';
 import 'package:fankosh/feature/home/widgets/attempts_bottom_sheet.dart';
+import 'package:fankosh/feature/notifications/notifications_screen.dart';
 import 'package:fankosh/feature/plans/plans_screen.dart';
+import 'package:fankosh/feature/profile/account_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,7 +23,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
-  int _currentTab = 0;
   bool _isRecording = false;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
@@ -35,21 +46,52 @@ class _HomeScreenState extends State<HomeScreen>
     super.dispose();
   }
 
-  void _toggleRecording() {
-    setState(() {
-      _isRecording = !_isRecording;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          _isRecording
-              ? 'جاري الاستماع... اتكلم وفانكوش هيرد بإفيه! 🎙️'
-              : 'تم حفظ المقطع! جاري تحضير الإفيه الجامد... ✨',
+  void _toggleRecording() async {
+    if (!AttemptsManager.hasAttempts) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const OutOfAttemptsScreen(),
         ),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+      );
+      return;
+    }
+
+    final action = await VoicePermissionService.requestVoiceAction(context);
+    if (!mounted) return;
+
+    if (action == VoiceAction.record) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const RecordingScreen()),
+      );
+    } else if (action == VoiceAction.upload) {
+      _pickAudioFromDevice();
+    }
+  }
+
+  void _pickAudioFromDevice() async {
+    if (!AttemptsManager.hasAttempts) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const OutOfAttemptsScreen(),
+        ),
+      );
+      return;
+    }
+
+    final file = await AudioPickerService.pickAudioFile();
+    if (file != null) {
+      if (!mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              AudioReviewScreen(audioPath: file.path, audioName: file.name),
+        ),
+      );
+    }
   }
 
   @override
@@ -57,9 +99,11 @@ class _HomeScreenState extends State<HomeScreen>
     final size = MediaQuery.of(context).size;
 
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: AppLocaleController.isArabic
+          ? TextDirection.rtl
+          : TextDirection.ltr,
       child: Scaffold(
-        backgroundColor: const Color(0xFFFCFAF5),
+        backgroundColor: ColorManager.backgroundColor,
         body: SafeArea(
           bottom: false,
           child: Stack(
@@ -79,40 +123,45 @@ class _HomeScreenState extends State<HomeScreen>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // Notifications Bell
+                          // Profile Icon (Right in RTL)
                           IconButton(
                             icon: const Icon(
-                              Icons.notifications_none_outlined,
-                              color: Color(0xFF1E2833),
-                              size: 26,
+                              Icons.account_circle_outlined,
+                              color: ColorManager.textDark,
+                              size: 28,
                             ),
                             onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('لا توجد إشعارات جديدة حالياً'),
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const AccountScreen(),
                                 ),
                               );
                             },
                           ),
 
-                          // App Logo
+                          // App Logo (Center)
                           Image.asset(
-                            'assets/images/fankosh_logo.png',
+                            AppAssets.fankoshLogo,
                             height: 42,
                             fit: BoxFit.contain,
                           ),
 
-                          // Profile Icon
+                          // Notifications Bell (Left in RTL)
                           IconButton(
                             icon: const Icon(
-                              Icons.account_circle_outlined,
-                              color: Color(0xFF1E2833),
-                              size: 28,
+                              Icons.notifications_none_outlined,
+                              color: ColorManager.textDark,
+                              size: 26,
                             ),
                             onPressed: () {
-                              setState(() {
-                                _currentTab = 2;
-                              });
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const NotificationsScreen(),
+                                ),
+                              );
                             },
                           ),
                         ],
@@ -120,43 +169,57 @@ class _HomeScreenState extends State<HomeScreen>
 
                       const SizedBox(height: 10),
 
-                      // Attempts Counter Badge (⚡ 3 محاولات)
-                      GestureDetector(
-                        onTap: () {
-                          showAttemptsBottomSheet(context);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFFF3CD),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: const Color(0xFFFFE082),
-                              width: 1,
-                            ),
-                          ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                '⚡',
-                                style: TextStyle(fontSize: 14),
+                      // Attempts Counter Badge (⚡ X محاولات)
+                      ValueListenableBuilder<int>(
+                        valueListenable:
+                            AttemptsManager.remainingAttemptsNotifier,
+                        builder: (context, remainingAttempts, _) {
+                          return GestureDetector(
+                            onTap: () {
+                              if (remainingAttempts <= 0) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const OutOfAttemptsScreen(),
+                                  ),
+                                );
+                              } else {
+                                showAttemptsBottomSheet(context);
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 6,
                               ),
-                              SizedBox(width: 4),
-                              Text(
-                                '3 محاولات',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF9E6C00),
+                              decoration: BoxDecoration(
+                                color: ColorManager.badgeYellowBg,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: ColorManager.primaryLight,
+                                  width: 1,
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text('⚡',
+                                      style: TextStyle(fontSize: 14)),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '$remainingAttempts محاولات',
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF9E6C00),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                       ),
 
                       const SizedBox(height: 16),
@@ -164,7 +227,7 @@ class _HomeScreenState extends State<HomeScreen>
                       // Hero Character Illustration
                       Center(
                         child: Image.asset(
-                          'assets/images/home_hero_character.png',
+                          AppAssets.homeHeroCharacter,
                           height: size.height * 0.22,
                           fit: BoxFit.contain,
                         ),
@@ -173,11 +236,54 @@ class _HomeScreenState extends State<HomeScreen>
                       // Speech Bubble
                       Transform.translate(
                         offset: const Offset(0, -10),
-                        child: Image.asset(
-                          'assets/images/speech_bubble.png',
-                          width: size.width * 0.78,
-                          fit: BoxFit.contain,
-                        ),
+                        child: AppLocaleController.isArabic
+                            ? Image.asset(
+                                AppAssets.speechBubble,
+                                width: size.width * 0.82,
+                                fit: BoxFit.contain,
+                              )
+                            : Container(
+                                width: size.width * 0.82,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 16,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(26),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color:
+                                          Colors.black.withValues(alpha: 0.06),
+                                      blurRadius: 16,
+                                      offset: const Offset(0, 6),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      context.tr.sayAnything,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w900,
+                                        color: ColorManager.textDark,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 3),
+                                    Text(
+                                      context.tr.willReplyWithEfieh,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 14.5,
+                                        fontWeight: FontWeight.bold,
+                                        color: ColorManager.textDark,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                       ),
 
                       const SizedBox(height: 10),
@@ -198,7 +304,8 @@ class _HomeScreenState extends State<HomeScreen>
                             height: 130,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: const Color(0xFFFFF2C2).withOpacity(0.5),
+                              color: const Color(0xFFFFF2C2)
+                                  .withValues(alpha: 0.5),
                             ),
                             alignment: Alignment.center,
                             child: Container(
@@ -206,7 +313,8 @@ class _HomeScreenState extends State<HomeScreen>
                               height: 106,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: const Color(0xFFFFDF70).withOpacity(0.7),
+                                color: const Color(0xFFFFDF70)
+                                    .withValues(alpha: 0.7),
                               ),
                               alignment: Alignment.center,
                               child: Container(
@@ -232,7 +340,7 @@ class _HomeScreenState extends State<HomeScreen>
                                       color: (_isRecording
                                               ? Colors.red
                                               : const Color(0xFFFFB300))
-                                          .withOpacity(0.4),
+                                          .withValues(alpha: 0.4),
                                       blurRadius: 16,
                                       offset: const Offset(0, 6),
                                     ),
@@ -247,7 +355,7 @@ class _HomeScreenState extends State<HomeScreen>
                                           : Icons.mic_rounded,
                                       color: _isRecording
                                           ? Colors.white
-                                          : const Color(0xFF1E2833),
+                                          : ColorManager.textDark,
                                       size: 38,
                                     ),
                                     if (!_isRecording)
@@ -256,7 +364,7 @@ class _HomeScreenState extends State<HomeScreen>
                                         right: 18,
                                         child: Icon(
                                           Icons.auto_awesome,
-                                          color: Color(0xFF1E2833),
+                                          color: ColorManager.textDark,
                                           size: 16,
                                         ),
                                       ),
@@ -272,25 +380,21 @@ class _HomeScreenState extends State<HomeScreen>
 
                       // Label below record button
                       Text(
-                        _isRecording ? 'جاري التسجيل...' : 'أضغط لبدء التسجيل',
+                        _isRecording
+                            ? context.tr.recording
+                            : context.tr.pressToRecord,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF1E2833),
+                          color: ColorManager.textDark,
                         ),
                       ),
 
                       const SizedBox(height: 18),
 
-                      // Upload Audio Button ("أو ارفع مقطع صوتي ⭱")
+                      // Upload Audio Button ("أو ارفع مقطع صوتي")
                       GestureDetector(
-                        onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('اختر ملف صوتي من جهازك'),
-                            ),
-                          );
-                        },
+                        onTap: _pickAudioFromDevice,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 20,
@@ -299,23 +403,21 @@ class _HomeScreenState extends State<HomeScreen>
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(24),
-                            border: Border.all(
-                              color: const Color(0xFFE2E6EE),
-                            ),
+                            border: Border.all(color: ColorManager.borderAlt),
                           ),
-                          child: const Row(
+                          child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'أو ارفع مقطع صوتي',
-                                style: TextStyle(
+                                context.tr.orUploadAudio,
+                                style: const TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
-                                  color: Color(0xFF7E8A9A),
+                                  color: ColorManager.textAfterButton,
                                 ),
                               ),
-                              SizedBox(width: 6),
-                              Icon(
+                              const SizedBox(width: 6),
+                              const Icon(
                                 Icons.file_upload_outlined,
                                 size: 18,
                                 color: Color(0xFF7E8A9A),
@@ -331,198 +433,30 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
               ),
 
-              // Bottom Corner Decorations (Clapperboard & Film Reel)
-              Positioned(
-                bottom: 20,
-                left: -15,
-                child: IgnorePointer(
-                  child: Image.asset(
-                    'assets/images/clapperboard.png',
-                    width: 140,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-
-              Positioned(
-                bottom: 10,
-                right: -10,
-                child: IgnorePointer(
-                  child: Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.grey.shade400.withOpacity(0.6),
-                      border: Border.all(color: Colors.grey.shade600, width: 4),
-                    ),
-                    child: Center(
-                      child: Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey.shade700,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
               // Floating Bottom Navigation Bar
               Positioned(
-                left: 24,
-                right: 24,
-                bottom: 24,
-                child: Container(
-                  height: 64,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.92),
-                    borderRadius: BorderRadius.circular(36),
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 1.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
-                        blurRadius: 20,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      // Tab 0: الرئيسية (Home)
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _currentTab = 0;
-                          });
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 18,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _currentTab == 0
-                                ? const Color(0xFFFFBE26)
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.home_rounded,
-                                size: 22,
-                                color: _currentTab == 0
-                                    ? Colors.white
-                                    : const Color(0xFF7E8A9A),
-                              ),
-                              if (_currentTab == 0) ...[
-                                const SizedBox(width: 6),
-                                const Text(
-                                  'الرئيسية',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: FankoshBottomNavBar(
+                  currentIndex: 0,
+                  onTap: (index) {
+                    if (index == 1) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PlansScreen(),
                         ),
-                      ),
-
-                      // Tab 1: الباقات (Plans)
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const PlansScreen(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          child: const Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.bolt_outlined,
-                                size: 22,
-                                color: Color(0xFF7E8A9A),
-                              ),
-                              SizedBox(height: 2),
-                              Text(
-                                'الباقات',
-                                style: TextStyle(
-                                  color: Color(0xFF7E8A9A),
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
+                      );
+                    } else if (index == 2) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AccountScreen(),
                         ),
-                      ),
-
-                      // Tab 2: حسابي (Profile)
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _currentTab = 2;
-                          });
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('صفحة الحساب الشخصي'),
-                              duration: Duration(seconds: 1),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.person_outline_rounded,
-                                size: 22,
-                                color: _currentTab == 2
-                                    ? const Color(0xFFFFBE26)
-                                    : const Color(0xFF7E8A9A),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                'حسابي',
-                                style: TextStyle(
-                                  color: _currentTab == 2
-                                      ? const Color(0xFFFFBE26)
-                                      : const Color(0xFF7E8A9A),
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                      );
+                    }
+                  },
                 ),
               ),
             ],

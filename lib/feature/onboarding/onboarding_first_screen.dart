@@ -1,3 +1,5 @@
+import 'package:fankosh/core/assets/app_assets.dart';
+import 'package:fankosh/core/style/color_manager.dart';
 import 'package:fankosh/core/widgets/app_primary_button.dart';
 import 'package:fankosh/feature/onboarding/onboarding_second_screen.dart';
 import 'package:fankosh/feature/onboarding/widgets/onboarding_page_indicator.dart';
@@ -15,7 +17,7 @@ class OnboardingFirstScreen extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(0xFFFCFAF5),
+        backgroundColor: ColorManager.backgroundColor,
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -29,7 +31,7 @@ class OnboardingFirstScreen extends StatelessWidget {
                 // Illustration
                 Center(
                   child: Image.asset(
-                    'assets/images/onboarding_1.png',
+                    AppAssets.onboarding1,
                     height: size.height * 0.40,
                     fit: BoxFit.contain,
                   ),

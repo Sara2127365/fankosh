@@ -1,3 +1,4 @@
+import 'package:fankosh/core/style/color_manager.dart';
 import 'package:fankosh/feature/auth/login/login_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -25,7 +26,7 @@ class OnboardingSkipButton extends StatelessWidget {
         child: const Text(
           'تخطي',
           style: TextStyle(
-            color: Color(0xFFE56969),
+            color: ColorManager.textNext,
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),

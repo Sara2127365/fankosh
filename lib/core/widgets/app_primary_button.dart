@@ -1,3 +1,4 @@
+import 'package:fankosh/core/style/color_manager.dart';
 import 'package:flutter/material.dart';
 
 class AppPrimaryButton extends StatelessWidget {
@@ -17,17 +18,15 @@ class AppPrimaryButton extends StatelessWidget {
     this.icon,
     this.isLoading = false,
     this.height = 56,
-    this.backgroundColor = const Color(0xFFFFBE26),
-    this.textColor = const Color(0xFF1E2833),
+    this.backgroundColor = ColorManager.primaryColor,
+    this.textColor = ColorManager.textDark,
     this.borderRadius = 30,
   });
 
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     return SizedBox(
@@ -49,6 +48,7 @@ class AppPrimaryButton extends StatelessWidget {
             Text(
               text,
               style: TextStyle(
+                fontFamily: ColorManager.fontFamily,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: textColor,
@@ -56,11 +56,7 @@ class AppPrimaryButton extends StatelessWidget {
             ),
             if (icon != null) ...[
               const SizedBox(width: 8),
-              Icon(
-                icon,
-                size: 20,
-                color: textColor,
-              ),
+              Icon(icon, size: 20, color: textColor),
             ],
           ],
         ),

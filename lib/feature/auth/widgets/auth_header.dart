@@ -1,3 +1,6 @@
+import 'package:fankosh/core/assets/app_assets.dart';
+import 'package:fankosh/core/style/color_manager.dart';
+
 import 'package:flutter/material.dart';
 
 class AuthHeader extends StatelessWidget {
@@ -18,7 +21,7 @@ class AuthHeader extends StatelessWidget {
       children: [
         Center(
           child: Image.asset(
-            'assets/images/fankosh_logo.png',
+            AppAssets.fankoshLogo,
             width: logoWidth,
             fit: BoxFit.contain,
           ),
@@ -30,7 +33,7 @@ class AuthHeader extends StatelessWidget {
           style: const TextStyle(
             fontSize: 25,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF1E2833),
+            color: ColorManager.textDark,
           ),
         ),
         const SizedBox(height: 8),
@@ -39,7 +42,7 @@ class AuthHeader extends StatelessWidget {
           textAlign: TextAlign.center,
           style: const TextStyle(
             fontSize: 14,
-            color: Color(0xFF7E8A9A),
+            color: ColorManager.textMuted,
             fontWeight: FontWeight.w500,
           ),
         ),

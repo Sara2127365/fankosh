@@ -1,3 +1,4 @@
+import 'package:fankosh/core/style/color_manager.dart';
 import 'package:flutter/material.dart';
 
 class OnboardingPageIndicator extends StatelessWidget {
@@ -21,7 +22,7 @@ class OnboardingPageIndicator extends StatelessWidget {
           width: 9,
           height: 9,
           decoration: BoxDecoration(
-            color: isActive ? const Color(0xFF299BF5) : const Color(0xFFD6DFE8),
+            color: isActive ? ColorManager.blueLink : ColorManager.borderAlt,
             shape: BoxShape.circle,
           ),
         );

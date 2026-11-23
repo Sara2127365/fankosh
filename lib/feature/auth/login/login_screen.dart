@@ -1,3 +1,4 @@
+import 'package:fankosh/core/style/color_manager.dart';
 import 'package:fankosh/core/widgets/app_primary_button.dart';
 import 'package:fankosh/feature/auth/forgetpassword/forget_password_screen.dart';
 import 'package:fankosh/feature/auth/signup/signup_screen.dart';
@@ -51,7 +52,9 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const PlansScreen()),
+        MaterialPageRoute(
+          builder: (context) => const PlansScreen(),
+        ),
       );
     });
   }
@@ -61,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(0xFFFCFAF5),
+        backgroundColor: ColorManager.backgroundColor,
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -106,7 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         _isPasswordObscured
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
-                        color: const Color(0xFF7E8A9A),
+                        color: ColorManager.textMuted,
                         size: 20,
                       ),
                       onPressed: () {
@@ -117,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     suffixIcon: const Icon(
                       Icons.lock_outline,
-                      color: Color(0xFF7E8A9A),
+                      color: ColorManager.textMuted,
                       size: 20,
                     ),
                   ),
@@ -145,12 +148,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 shape: BoxShape.circle,
                                 border: Border.all(
                                   color: _rememberMe
-                                      ? const Color(0xFFFFBE26)
-                                      : const Color(0xFF7E8A9A),
+                                      ? ColorManager.primaryColor
+                                      : ColorManager.textMuted,
                                   width: 2,
                                 ),
                                 color: _rememberMe
-                                    ? const Color(0xFFFFBE26)
+                                    ? ColorManager.primaryColor
                                     : Colors.transparent,
                               ),
                               child: _rememberMe
@@ -215,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const Text(
                         'لسه معندكش حساب؟ ',
                         style: TextStyle(
-                          color: Color(0xFF7E8A9A),
+                          color: ColorManager.textAfterButton,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
