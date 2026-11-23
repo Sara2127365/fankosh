@@ -23,7 +23,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
-  bool _isRecording = false;
+ final bool _isRecording = false;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
 
