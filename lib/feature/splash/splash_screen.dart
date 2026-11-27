@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:fankosh/core/assets/app_assets.dart';
 import 'package:fankosh/feature/onboarding/onboarding_first_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -49,21 +50,39 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Navigate to OnboardingFirstScreen after 2.8 seconds
-    Timer(const Duration(milliseconds: 2800), () {
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 600),
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              const OnboardingFirstScreen(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-        ),
-      );
-    });
+    // طلب إذن الإشعارات والميكروفون/الصوت ثم الانتقال للشاشة التالية
+    _requestPermissionsAndNavigate();
+  }
+
+  Future<void> _requestPermissionsAndNavigate() async {
+    // انتظار ظهور أنيميشن السبلاش أولاً
+    await Future.delayed(const Duration(milliseconds: 1000));
+    if (!mounted) return;
+
+    try {
+      // 1. طلب إذن الإشعارات لأندرويد و iOS
+      await Permission.notification.request();
+
+      // 2. طلب إذن الميكروفون/الصوت لأندرويد و iOS
+      await Permission.microphone.request();
+    } catch (e) {
+      debugPrint("Error requesting permissions on startup: $e");
+    }
+
+    if (!mounted) return;
+
+    // 3. الانتقال إلى شاشة التعريف بعد الأذونات
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 600),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const OnboardingFirstScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    );
   }
 
   @override

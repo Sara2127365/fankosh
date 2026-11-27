@@ -4,6 +4,8 @@
 <dict>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>نحتاج إذن الميكروفون لتسجيل صوتك والبحث عن الإفيه المناسب.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>نحتاج إذن التعرف على الصوت لتحويل صوتك والبحث عن الإفيه المناسب.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
